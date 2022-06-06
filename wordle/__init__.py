@@ -1,5 +1,5 @@
 __all__ = [
-    'load_dictionary',
+    'load_word_list',
 ]
 
-from .word_list_loader import load_dictionary
+from .word_list_loader import load_word_list
