@@ -24,6 +24,17 @@ type AnswerData struct {
 	Answer string `json:"answer"`
 }
 
+// GetScrapes extracts the answer data from the specified string.
+// This data is in JSON-like format following the string "pastData:".
+// JSON-like because it is not quite valid JSON for two reasons:
+//
+// 1. The property names are not quoted.
+//
+// 2. The index field is almost always numeric, but there are several
+// places where it is unquoted alphabetic data.
+//
+// So after the JSON string is extracted, I pre-process the
+// property names and index values to make them quoted.
 func GetScrapes(body string) []AnswerData {
 
 	const startTag = "pastData:["
