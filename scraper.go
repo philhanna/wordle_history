@@ -2,8 +2,10 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -20,6 +22,10 @@ type AnswerData struct {
 	Date   string `json:"date"`
 	Index  string `json:"index"`
 	Answer string `json:"answer"`
+}
+
+func (ad AnswerData) String() string {
+	return fmt.Sprintf("%q,%q,%q", ad.Date, ad.Index, ad.Answer)
 }
 
 func GetScrapes(body string) []AnswerData {
@@ -69,5 +75,20 @@ func GetScrapes(body string) []AnswerData {
 	for _, monthStruct := range data {
 		answers = append(answers, monthStruct.Answers...)
 	}
+
+	// Convert the date string YYMMDD to YYYY-MM-DD
+	for i, answer := range answers {
+		answer.Date = ToYYYYMMDD(answer.Date)
+		answers[i] = answer
+	}
 	return answers
+}
+
+func ToYYYYMMDD(yymmdd string) string {
+	yy, _ := strconv.Atoi(yymmdd[:2])
+	mm, _ := strconv.Atoi(yymmdd[2:4])
+	dd, _ := strconv.Atoi(yymmdd[4:])
+	yyyymmdd := fmt.Sprintf("20%02d-%02d-%02d", yy, mm, dd)
+	return yyyymmdd
+
 }
