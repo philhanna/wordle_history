@@ -84,11 +84,11 @@ func GetScrapes(body string) []AnswerData {
 	return answers
 }
 
+// ToYYYYMMDD reformats the date string from yymmdd to YYYY-MM-DD
 func ToYYYYMMDD(yymmdd string) string {
 	yy, _ := strconv.Atoi(yymmdd[:2])
 	mm, _ := strconv.Atoi(yymmdd[2:4])
 	dd, _ := strconv.Atoi(yymmdd[4:])
 	yyyymmdd := fmt.Sprintf("20%02d-%02d-%02d", yy, mm, dd)
 	return yyyymmdd
-
 }
