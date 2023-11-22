@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"regexp"
 	"strings"
 )
 
@@ -41,7 +42,11 @@ func GetScrapes(body string) []Scrape {
 
 	// q now points to the last closing bracket at this level
 	subBody := "[" + body[p:q]
-	os.WriteFile("/tmp/a.json", []byte(subBody), 0644)
+
+	re := regexp.MustCompile(`(\w+):`)
+	a := re.ReplaceAllString(subBody, `"$1"`)
+
+	os.WriteFile("/tmp/a.json", []byte(a), 0644)
 
 
 	scrapes := make([]Scrape, 0)
