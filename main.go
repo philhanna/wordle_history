@@ -1,69 +1,47 @@
 package main
 
 import (
-	"database/sql"
+	"fmt"
+	"io"
 	"log"
-	"os"
-	"path/filepath"
-
-	_ "github.com/mattn/go-sqlite3"
+	"net/http"
 )
 
+const URL = "https://wordfinder.yourdictionary.com/wordle/answers"
+
 func main() {
+	var (
+		body []byte
+		data string
+		err  error
+		resp *http.Response
+	)
 
-	var err error
-
+	// Set the log flags to include source file and line number
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
-	body, err := FromWebSite()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// Extract history data
-	history := GetScrapes(body)
-	
-	// Create the database
-	tempDir := os.TempDir()
-	filename := filepath.Join(tempDir, "wordle_history.db")
-	log.Printf("Creating %q for %d history records...\n", filename, len(history))
-
-	// Delete any old version
-	os.Remove(filename)
-
-	// Create the new database
-	db, err := sql.Open("sqlite3", filename)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer db.Close()
-
-	// Create the wordle history table
-	sql_create := `CREATE TABLE history (
-		date	TEXT,
-		puzzle	TEXT,
-		word	TEXT
-	);`
-	_, err = db.Exec(sql_create)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// Insert all the records
-	sql_insert := `INSERT INTO history VALUES(?, ?, ?);`
-	stmt, err := db.Prepare(sql_insert)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer stmt.Close()
-
-	for _, answer := range history {
-		_, err := stmt.Exec(answer.Date, answer.Index, answer.Answer)
+	// Internal function to handle errors consistently
+	checkError := func(err error) {
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
 
-	// Done
-	log.Printf("Done.\n")
+	// Download the data
+	resp, err = http.Get(URL)
+	checkError(err)
+	defer resp.Body.Close()
+	if resp.StatusCode != 200 {
+		err = fmt.Errorf("return code %d from website", resp.StatusCode)
+		log.Fatal(err)
+	}
+	body, err = io.ReadAll(resp.Body)
+	checkError(err)
+
+	// Convert the byte slice to string
+	data = string(body)
+
+	// Create the database from the body
+	err = CreateDatabase(data)
+	checkError(err)
 }
