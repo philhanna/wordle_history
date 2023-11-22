@@ -24,6 +24,6 @@ type Scraper struct {
 */
 
 func GetRows(body string) []string {
-	re := regexp.MustCompile(`(?s)(<tr.*?</tr>)`)
+	re := regexp.MustCompile(`(?si)(<tr.*?</tr>)`)
 	return re.FindAllString(body, -1)
 }
