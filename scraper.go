@@ -44,7 +44,7 @@ func GetScrapes(body string) []Scrape {
 	subBody := "[" + body[p:q]
 
 	re := regexp.MustCompile(`(\w+):`)
-	a := re.ReplaceAllString(subBody, `"$1"`)
+	a := re.ReplaceAllString(subBody, `"$1":`)
 
 	os.WriteFile("/tmp/a.json", []byte(a), 0644)
 
