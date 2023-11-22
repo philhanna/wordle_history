@@ -24,10 +24,6 @@ type AnswerData struct {
 	Answer string `json:"answer"`
 }
 
-func (ad AnswerData) String() string {
-	return fmt.Sprintf("%q,%q,%q", ad.Date, ad.Index, ad.Answer)
-}
-
 func GetScrapes(body string) []AnswerData {
 
 	const startTag = "pastData:["
