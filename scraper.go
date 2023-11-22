@@ -1,7 +1,8 @@
 package main
 
 import (
-	"os"
+	"encoding/json"
+	"log"
 	"regexp"
 	"strings"
 )
@@ -10,14 +11,19 @@ import (
 // Type Definitions
 // ---------------------------------------------------------------------
 
-type Scrape struct {
-	date   string // Date word was used, format YYYY-MM-DD
-	puzzle int    // Puzzle number
-	word   string // The word
+type MonthData struct {
+	Month   string       `json:"month"`
+	Answers []AnswerData `json:"answers"`
 }
 
-func GetScrapes(body string) []Scrape {
-	
+type AnswerData struct {
+	Date   string `json:"date"`
+	Index  string `json:"index"`
+	Answer string `json:"answer"`
+}
+
+func GetScrapes(body string) []AnswerData {
+
 	const startTag = "pastData:["
 
 	// Find the start of the past data
@@ -41,14 +47,27 @@ func GetScrapes(body string) []Scrape {
 	}
 
 	// q now points to the last closing bracket at this level
-	subBody := "[" + body[p:q]
+	body = "[" + body[p:q]
 
-	re := regexp.MustCompile(`(\w+):`)
-	a := re.ReplaceAllString(subBody, `"$1":`)
+	// Quote the value of index:
+	re := regexp.MustCompile(`index:(.*?),`)
+	body = re.ReplaceAllString(body, `index:"$1",`)
 
-	os.WriteFile("/tmp/a.json", []byte(a), 0644)
+	// Quote property names
+	re = regexp.MustCompile(`(\w+):`)
+	body = re.ReplaceAllString(body, `"$1":`)
 
+	// Now unmarshal the JSON structure into a slice of MonthData
+	var data []MonthData
+	err := json.Unmarshal([]byte(body), &data)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	scrapes := make([]Scrape, 0)
-	return scrapes
+	// Unwrap the answer data from each month
+	answers := make([]AnswerData, 0)
+	for _, monthStruct := range data {
+		answers = append(answers, monthStruct.Answers...)
+	}
+	return answers
 }
