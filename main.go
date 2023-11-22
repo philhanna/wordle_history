@@ -11,12 +11,16 @@ import (
 
 func main() {
 
+	var err error
+
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
-	// Get the history data
-	log.Printf("Downloading history data...\n")
-	data, _ := os.ReadFile("testdata/answers.html")
-	body := string(data)
+	body, err := FromWebSite()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Extract history data
 	history := GetScrapes(body)
 	
 	// Create the database
