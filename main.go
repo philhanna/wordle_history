@@ -28,6 +28,7 @@ func main() {
 	}
 
 	// Download the data
+	log.Printf("Downloading answer data HTML from website...\n")
 	resp, err = http.Get(URL)
 	checkError(err)
 	defer resp.Body.Close()

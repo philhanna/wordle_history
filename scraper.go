@@ -37,6 +37,8 @@ type AnswerData struct {
 // property names and index values to make them quoted.
 func GetScrapes(body string) []AnswerData {
 
+	log.Printf("Parsing HTML for answer data...\n")
+
 	const startTag = "pastData:["
 
 	// Find the start of the past data
