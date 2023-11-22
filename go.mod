@@ -1,4 +1,4 @@
-module wordle
+module github.com/philhanna/wordle_history
 
 go 1.21.4
 
