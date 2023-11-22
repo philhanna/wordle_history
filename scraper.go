@@ -1,8 +1,7 @@
 package main
 
 import (
-	// "time"
-	"regexp"
+	"os"
 	"strings"
 )
 
@@ -10,37 +9,41 @@ import (
 // Type Definitions
 // ---------------------------------------------------------------------
 
-/*
-input := "2017-08-31"
-layout := "2006-01-02"
-t, _ := time.Parse(layout, input)
-fmt.Println(t.Format("02-Jan-2006")) // Output: 31-Aug-2017
-*/
-/*
-type Scraper struct {
+type Scrape struct {
 	date   string // Date word was used, format YYYY-MM-DD
 	puzzle int    // Puzzle number
 	word   string // The word
 }
-*/
 
-func GetRows(body string) []string {
-	re := regexp.MustCompile(`(?si)(<tr.*?</tr>)`)
-	return re.FindAllString(body, -1)
-}
+func GetScrapes(body string) []Scrape {
+	
+	const startTag = "pastData:["
 
-func ParseRow(row string) []string {
-	re := regexp.MustCompile(`(?s)<td.*?>(.*?)</td>`)
-	m := re.FindAllStringSubmatch(row, -1)
-	if m == nil {
+	// Find the start of the past data
+	p := strings.Index(body, startTag)
+	if p == -1 {
 		return nil
 	}
-	output := make([]string, 0)
-	for _, cell := range m {
-		td := cell[1]
-		td = strings.ReplaceAll(td, "<!---->", "")
-		trimmed := strings.Trim(td, "\n\t ")
-		output = append(output, trimmed)
+	p += len(startTag)
+	q := p
+
+	// Find the end of the past data by finding the last right bracket
+	// at this level
+	for level := 1; level > 0; q++ {
+		switch body[q] {
+		case '[':
+			level++
+		case ']':
+			level--
+		default:
+		}
 	}
-	return output
+
+	// q now points to the last closing bracket at this level
+	subBody := "[" + body[p:q]
+	os.WriteFile("/tmp/a.json", []byte(subBody), 0644)
+
+
+	scrapes := make([]Scrape, 0)
+	return scrapes
 }
