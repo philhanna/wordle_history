@@ -1,4 +1,4 @@
-package database
+package dbcreator
 
 import (
 	"database/sql"

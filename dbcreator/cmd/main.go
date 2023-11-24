@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	db "github.com/philhanna/wordle_history/database"
+	"github.com/philhanna/wordle_history/dbcreator"
 	"io"
 	"log"
 	"net/http"
@@ -44,6 +44,6 @@ func main() {
 	data = string(body)
 
 	// Create the database from the body
-	err = db.CreateDatabase(data)
+	err = dbcreator.CreateDatabase(data)
 	checkError(err)
 }
