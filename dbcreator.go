@@ -16,7 +16,7 @@ func CreateDatabase(body string) error {
 	// Extract history data
 	history := GetScrapes(body)
 
-	// Create the database
+	// Create the name to be used for the database file
 	tempDir := os.TempDir()
 	filename := filepath.Join(tempDir, "wordle_history.db")
 	log.Printf("Creating %q for %d history records...\n", filename, len(history))
