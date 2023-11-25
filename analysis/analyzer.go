@@ -14,6 +14,10 @@ type Statistic struct {
 	Name  string
 	Value string
 }
+type LetterCount struct {
+	letter byte
+	count  int
+}
 
 // ---------------------------------------------------------------------
 // Functions
@@ -24,9 +28,9 @@ func Analyze(words []string) []Statistic {
 	return nil
 }
 
-// LetterFrequency scans the list of words and returns a string
-// containing the letters they contain in descending order of frequency.
-func LetterFrequency(words []string) Statistic {
+func GetLetterFrequencies(words []string) []LetterCount {
+
+	// Compute the frequencies
 	freq := make(map[byte]int)
 	for _, word := range words {
 		for i := 0; i < WORDLEN; i++ {
@@ -34,11 +38,8 @@ func LetterFrequency(words []string) Statistic {
 			freq[ch]++
 		}
 	}
-	// Sort the map descending by frequency count
-	type LetterCount struct {
-		letter byte
-		count  int
-	}
+	
+	// Sort the map descending by frequency count, descending
 	letterCounts := make([]LetterCount, 0)
 	for letter, count := range freq {
 		letterCounts = append(letterCounts, LetterCount{letter, count})
@@ -46,6 +47,15 @@ func LetterFrequency(words []string) Statistic {
 	sort.Slice(letterCounts, func(i, j int) bool {
 		return letterCounts[i].count > letterCounts[j].count
 	})
+
+	return letterCounts
+}
+
+// LetterFrequency scans the list of words and returns a string
+// containing the letters they contain in descending order of frequency.
+func LetterFrequency(words []string) Statistic {
+
+	letterCounts := GetLetterFrequencies(words)
 
 	// Assemble the letters into a string
 	letters := make([]byte, len(letterCounts))
