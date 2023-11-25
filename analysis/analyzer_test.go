@@ -31,3 +31,21 @@ func TestLoadWords(t *testing.T) {
 		})
 	}
 }
+
+func TestLetterFrequency(t *testing.T) {
+	tests := []struct {
+		name string
+		filename string
+		want Statistic
+	}{
+		{"Full list", "testdata/history.db", Statistic{}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			words, err := LoadWords(tt.filename)
+			assert.Nil(t, err)
+			actual := LetterFrequency(words)
+			fmt.Printf("%s\n", actual.Value)
+		})
+	}
+}
