@@ -16,7 +16,7 @@ func LoadWords(filename string) ([]string, error) {
 	defer db.Close()
 
 	// Issue a query for the words in the history table
-	rows, err := db.Query(`SELECT word FROM history`)
+	rows, err := db.Query(`SELECT word FROM history ORDER BY date`)
 	if err != nil {
 		return nil, err
 	}
