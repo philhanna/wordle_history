@@ -4,21 +4,17 @@ import (
 	"database/sql"
 	"log"
 	"os"
-	"path/filepath"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
 // CreateDatabase creates an sqlite3 database in the system temporary
 // directory (/tmp on Linux) from the specified HTML data.
-func CreateDatabase(body string) error {
+func CreateDatabase(body string, filename string) error {
 
 	// Extract history data
 	history := GetScrapes(body)
 
-	// Create the name to be used for the database file
-	tempDir := os.TempDir()
-	filename := filepath.Join(tempDir, "wordle_history.db")
 	log.Printf("Creating %q for %d history records...\n", filename, len(history))
 
 	// Delete any old version
