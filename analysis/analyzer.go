@@ -28,6 +28,9 @@ func Analyze(words []string) []Statistic {
 	return nil
 }
 
+// GetLetterFrequencies scans the list of words and returns a slice of
+// LetterCount structure that describe equal letter found in the list
+// and the number of times it occurs
 func GetLetterFrequencies(words []string) []LetterCount {
 
 	// Compute the frequencies
@@ -38,12 +41,14 @@ func GetLetterFrequencies(words []string) []LetterCount {
 			freq[ch]++
 		}
 	}
-	
-	// Sort the map descending by frequency count, descending
+
+	// Make a list of letter count structures
 	letterCounts := make([]LetterCount, 0)
 	for letter, count := range freq {
 		letterCounts = append(letterCounts, LetterCount{letter, count})
 	}
+	
+	// Sort the list descending by frequency count, descending
 	sort.Slice(letterCounts, func(i, j int) bool {
 		return letterCounts[i].count > letterCounts[j].count
 	})
@@ -64,6 +69,7 @@ func LetterFrequency(words []string) Statistic {
 	}
 	lettersString := string(letters)
 
+	// Return the computed statistic
 	stat := Statistic{
 		Name:  "Letter frequency",
 		Value: lettersString,
