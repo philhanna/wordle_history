@@ -6,7 +6,8 @@ import "database/sql"
 // Functions
 // ---------------------------------------------------------------------
 
-// LoadWords get the list of words from the history database
+// LoadWords get the list of words from the history database, sorted in
+// date order.
 func LoadWords(filename string) ([]string, error) {
 
 	// Connect to the database
