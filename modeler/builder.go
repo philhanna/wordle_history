@@ -1,4 +1,4 @@
-package analysis
+package modeler
 
 import (
 	"database/sql"
